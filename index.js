@@ -25,7 +25,7 @@ app.use(
 );
 
 const corsOptions = {
-    origin: process.env.CLIENT_URL || "http://localhost:3000",
+    origin: "*",
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
 };
