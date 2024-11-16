@@ -263,29 +263,25 @@ export const getCampaignsWithCounts = async (req, res) => {
         const closedCount = campaigns.filter(
             (campaign) => campaign.state === "CLOSED"
         ).length;
-        const campaignStats = await Promise.all(
-            campaigns.map(async (campaign) => {
-                const logs = await CommunicationLog.find({
-                    campaignId: campaign._id,
-                });
+        const sentCampaignCount = campaigns.filter(
+            (campaign) => campaign.state === "SENT"
+        ).length;
 
-                const sentCount = logs.filter(
-                    (log) => log.status === "SENT"
-                ).length;
-                const pendingCount = logs.filter(
-                    (log) => log.status === "PENDING"
-                ).length;
+        const pendingCampaignCount = campaigns.filter(
+            (campaign) => campaign.state === "PENDING"
+        ).length;
 
-                return {
-                    campaignId: campaign._id,
-                    title: campaign.title,
-                    openCount,
-                    closedCount,
-                    sentCount,
-                    pendingCount,
-                };
-            })
-        );
+        // Calculate stats for each campaign
+        const campaignStats = campaigns.map((campaign) => {
+            return {
+                campaignId: campaign._id,
+                title: campaign.title,
+                openCount,
+                closedCount,
+                sentCount: sentCampaignCount,
+                pendingCount: pendingCampaignCount,
+            };
+        });
 
         res.json({ campaignStats });
     } catch (error) {
