@@ -19,11 +19,38 @@ export const createCampaign = async (req, res) => {
             segmentId,
         });
 
-        const audience = await Customer.find({ segmentId: segmentId });
+        const { conditions, logic } = segment;
+        const queryConditions = conditions
+            .map((condition) => {
+                const { field, operator, value } = condition;
+                switch (operator) {
+                    case ">":
+                        return { [field]: { $gt: value } };
+                    case "<":
+                        return { [field]: { $lt: value } };
+                    case ">=":
+                        return { [field]: { $gte: value } };
+                    case "<=":
+                        return { [field]: { $lte: value } };
+                    case "=":
+                        return { [field]: value };
+                    default:
+                        return null;
+                }
+            })
+            .filter(Boolean);
+
+        let filterQuery = {};
+        if (logic === "OR") {
+            filterQuery = { $or: queryConditions };
+        } else {
+            filterQuery = { $and: queryConditions };
+        }
+
+        const audience = await Customer.find(filterQuery);
         await campaign.save();
         const logs = [];
 
-        console.log("customer", segmentId);
         for (const customer of audience) {
             const personalizedMessage = `Hi ${customer.name}, ${title}`;
 
@@ -36,7 +63,7 @@ export const createCampaign = async (req, res) => {
 
             await sendMessageToQueue({ logId: log._id });
         }
-
+        console.log("customer");
         res.status(201).json({
             campaignId: campaign._id,
             title: title,
@@ -135,13 +162,13 @@ export const getPastCampaigns = async (req, res) => {
             .limit(limit)
             .sort({ createdAt: -1 })
             .populate("segmentId", "name");
-        console.log("campaigns", campaigns);
+
         if (campaigns.length === 0) {
             return res.status(404).json({ message: "No past campaigns found" });
         }
 
         const totalCampaigns = await Campaign.countDocuments({ userId });
-        console.log("totalCampaigns", totalCampaigns);
+
         const campaignsWithStats = await Promise.all(
             campaigns.map(async (campaign) => {
                 const logs = await CommunicationLog.find({
