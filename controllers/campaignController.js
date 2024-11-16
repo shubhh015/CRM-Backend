@@ -63,7 +63,7 @@ export const createCampaign = async (req, res) => {
 
             await sendMessageToQueue({ logId: log._id });
         }
-        console.log("customer");
+
         res.status(201).json({
             campaignId: campaign._id,
             title: title,
