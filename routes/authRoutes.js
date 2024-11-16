@@ -21,6 +21,10 @@ router.post("/google", async (req, res) => {
                 name: googleUser.name,
             });
             await user.save();
+        } else {
+            user.name = googleUser.name;
+            user.email = googleUser.email;
+            await user.save();
         }
 
         const jwtToken = jwt.sign(
