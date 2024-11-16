@@ -122,7 +122,7 @@ export const updateCampaignStatus = async (req, res) => {
 
 export const getPastCampaigns = async (req, res) => {
     try {
-        const userId = req.query.user._id;
+        const userId = req.query.userId;
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
 
