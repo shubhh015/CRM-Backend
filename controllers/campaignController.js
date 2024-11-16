@@ -265,24 +265,19 @@ export const getCampaignsWithCounts = async (req, res) => {
             (campaign) => campaign.state === "CLOSED"
         ).length;
         const sentCampaignCount = campaigns.filter(
-            (campaign) => campaign.state === "SENT"
+            (campaign) => campaign.status === "SENT"
         ).length;
 
         const pendingCampaignCount = campaigns.filter(
-            (campaign) => campaign.state === "PENDING"
+            (campaign) => campaign.status === "PENDING"
         ).length;
 
-        // Calculate stats for each campaign
-        const campaignStats = campaigns.map((campaign) => {
-            return {
-                campaignId: campaign._id,
-                title: campaign.title,
-                openCount,
-                closedCount,
-                sentCount: sentCampaignCount,
-                pendingCount: pendingCampaignCount,
-            };
-        });
+        const campaignStats = {
+            openCount,
+            closedCount,
+            sentCount: sentCampaignCount,
+            pendingCount: pendingCampaignCount,
+        };
 
         res.json({ campaignStats });
     } catch (error) {
