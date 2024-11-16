@@ -23,7 +23,7 @@ export const createCampaign = async (req, res) => {
         await campaign.save();
         const logs = [];
 
-        console.log("customer", audience);
+        console.log("customer", segmentId);
         for (const customer of audience) {
             const personalizedMessage = `Hi ${customer.name}, ${title}`;
 
