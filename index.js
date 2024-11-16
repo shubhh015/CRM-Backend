@@ -25,11 +25,12 @@ app.use(
 );
 
 const corsOptions = {
-    origin: "*",
+    origin: process.env.CLIENT_URL,
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
 };
 
+app.use(cors(corsOptions));
 app.use(cors(corsOptions));
 
 app.use("/auth", authRoutes);
