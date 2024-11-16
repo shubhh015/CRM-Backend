@@ -1,5 +1,4 @@
 import { getChannel } from "../config/rabbitmq.js";
-import CommunicationLog from "../models/CommunicationLog.js";
 
 const QUEUE_NAME = "messageQueue";
 
@@ -16,7 +15,26 @@ export const startConsumer = async () => {
 
                     const status = Math.random() < 0.9 ? "SENT" : "FAILED";
 
-                    await CommunicationLog.findByIdAndUpdate(logId, { status });
+                    const req = {
+                        body: {
+                            logId,
+                            status,
+                        },
+                    };
+                    const res = {
+                        status: (code) => ({
+                            json: (response) =>
+                                console.log(
+                                    `Response Code: ${code}, Message: ${JSON.stringify(
+                                        response
+                                    )}`
+                                ),
+                        }),
+                        json: (response) =>
+                            console.log(`Success: ${JSON.stringify(response)}`),
+                    };
+
+                    await updateDeliveryStatus(req, res);
                     console.log(
                         `✅ Processed message with logId: ${logId}, Status: ${status}`
                     );
