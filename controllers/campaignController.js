@@ -122,7 +122,7 @@ export const updateCampaignStatus = async (req, res) => {
 
 export const getPastCampaigns = async (req, res) => {
     try {
-        const userId = req.user._id;
+        const userId = req.query.user._id;
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
 
@@ -133,7 +133,7 @@ export const getPastCampaigns = async (req, res) => {
             .limit(limit)
             .sort({ createdAt: -1 })
             .populate("segmentId", "name");
-
+        console.log("campaigns", campaigns);
         if (campaigns.length === 0) {
             return res.status(404).json({ message: "No past campaigns found" });
         }
