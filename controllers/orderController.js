@@ -17,7 +17,7 @@ export const createOrder = async (req, res) => {
 
         await newOrder.save();
 
-        customer.totalSpending += amount;
+        customer.totalSpending = customer.totalSpending + amount;
         await customer.save();
 
         res.status(201).json({
