@@ -139,7 +139,7 @@ export const getPastCampaigns = async (req, res) => {
         }
 
         const totalCampaigns = await Campaign.countDocuments({ userId });
-
+        console.log("totalCampaigns", totalCampaigns);
         const campaignsWithStats = await Promise.all(
             campaigns.map(async (campaign) => {
                 const logs = await CommunicationLog.find({
