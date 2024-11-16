@@ -158,6 +158,7 @@ export const getPastCampaigns = async (req, res) => {
                     segmentTitle: campaign.segmentId?.name || "N/A",
                     sentCount,
                     failedCount,
+                    audienceSize: logs.length,
                     status: sentCount === logs.length ? "SENT" : "PENDING",
                     state: campaign.state,
                     createdAt: campaign.createdAt,
