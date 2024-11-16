@@ -12,17 +12,16 @@ export const createCampaign = async (req, res) => {
         if (!segment) {
             return res.status(404).json({ message: "Segment not found" });
         }
-        const logs = [];
+
         const campaign = await Campaign.create({
             userId,
             title,
             segmentId,
         });
 
-        const audience = await Customer.find({
-            totalSpending: { $gt: 10000 },
-        });
-
+        const audience = await Customer.find({ segmentId: segmentId });
+        await campaign.save();
+        const logs = [];
         for (const customer of audience) {
             const personalizedMessage = `Hi ${customer.name}, ${title}`;
 
@@ -32,6 +31,7 @@ export const createCampaign = async (req, res) => {
                 message: personalizedMessage,
             });
             logs.push(log);
+
             await sendMessageToQueue({ logId: log._id });
         }
 
