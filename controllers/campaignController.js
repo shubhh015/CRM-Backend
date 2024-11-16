@@ -22,6 +22,8 @@ export const createCampaign = async (req, res) => {
         const audience = await Customer.find({ segmentId: segmentId });
         await campaign.save();
         const logs = [];
+
+        console.log("customer", audience);
         for (const customer of audience) {
             const personalizedMessage = `Hi ${customer.name}, ${title}`;
 
